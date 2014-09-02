@@ -2,6 +2,67 @@ import java.io.*;
 import javax.sound.midi.*;
 import java.util.Scanner;
 
+private class Note{
+	public int on;
+	public int off;
+	public int key;
+	private static final String[] NOTES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+	public Note(int KEY, int ON, int OFF){
+		on = ON;
+		off = OFF;
+		key = KEY;
+	}
+	public Note(int KEY, int ON){
+		on = ON;
+		off = -1;
+		key = KEY;
+	}
+	public int length(){
+		if(off==-1){
+			return -1;
+		}
+		return off-on;
+	}
+	public int octave(){
+		return (key/12)-1;
+	}
+	public String name(){
+		return NOTES[key%12];
+	}
+}
+/* 
+private class Channel{
+	public int value;
+	private boolean[] notes_playing = new boolean[12];
+	public Channel(int _chan){
+		value = _chan;
+	}
+	public void Start(Note n){
+		for(Note check:notes_playing){
+			if(check.key==n.key){
+				// note already being played
+				return;
+			}
+		}
+		ArrayList.add(n);
+	}
+	public void End(Note n){
+		int i = 0;
+		for(Note check:notes_playing){
+			i++;
+			if(check.key==n.key){
+				notes_playing.remove(i);
+				return;
+			}
+		}
+	}
+}
+ */
+ /* 
+private class Track{
+	
+} */
+
 public class MidiLights {
 
 	public static final int NOTE_ON = 0x90;
@@ -19,14 +80,16 @@ public class MidiLights {
 			
 			
 		int iterator = 0;
+		
 		for(Track track : tracks) {
 			writer.println("\n\nChanging to track "+(iterator++)+"\n\n");
-		
+			
 			//Loop through every MIDIEvent in track
 			for(int i = 0; i < track.size(); i++) {
 			
 				MidiEvent event = track.get(i);
-				writer.println(event.getTick() + " ");
+				int timestamp = event.getTick();
+				writer.print(timestamp+"->");
 				MidiMessage message = event.getMessage();
 				
 				//Short Messages are what notes are, plus some extra effect stuff.
@@ -44,6 +107,16 @@ public class MidiLights {
 						String noteName = NOTES[note];
 						int velocity = sm.getData2();
 						writer.println("Channel: " + channel + " "+"Note ON:  " + noteName + octave + " key: " + key + " velocity: " + velocity);
+						
+						if(velocity<=10){ // 10 is arbitrary number within audible level
+										 // anything less is too quite to hear
+										// so we just assume note is turned off
+							
+						}
+						else{
+							// note is turned on
+							
+						}
 						
 					}
 					else if(cmd == NOTE_OFF) {
