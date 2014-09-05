@@ -49,18 +49,20 @@ public class MidiLights {
 						int velocity = sm.getData2();
 						// writer.println("Channel: " + channel + " "+"Note ON:  " + noteName + octave + " key: " + key + " velocity: " + velocity);
 						
-			System.out.println("main "+(i++));
+			// System.out.println("main "+(i));
 			
 			// output in main output line above current key values
 			// then in class functions output also to make sure correct
 			
 			
 						if(velocity>10){ // note is turned on
+							System.out.println("start:"+channel+","+key+";"+timestamp);
 							cur_track.get(channel).Start(key, timestamp);
 						}
 						else{ // 10 is arbitrary number within audible level
 							 // anything less is too quite to hear
 							// so we just assume note is turned off
+							System.out.println("stop:"+channel+","+key+";"+timestamp);
 							cur_track.get(channel).Stop(key, timestamp);
 						}
 						
@@ -71,10 +73,12 @@ public class MidiLights {
 						int note = key % 12;
 						String noteName = NOTES[note];
 						int velocity = sm.getData2();
+						System.out.println("noteOFF:"+channel+","+key+";"+timestamp);
+						cur_track.get(channel).Stop(key, timestamp);
 						// writer.println("Channel: " + channel + " "+"Note OFF:  " + noteName + octave + " key: " + key + " velocity: " + velocity);						
 					}
 					else {
-						System.out.println("loop index = "+i+" Command: " + cmd);
+						// System.out.println("loop index = "+i+" Command: " + cmd);
 					}
 				
 				}
