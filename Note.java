@@ -2,6 +2,7 @@ public class Note{
 	public long on;
 	public long off;
 	public int key;
+	public boolean sustain;
 	private static final String[] NOTES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 	public Note(int KEY, long ON, long OFF){
 		on = ON;

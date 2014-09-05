@@ -15,10 +15,9 @@ public class Channel{
 		for(Note check:notes_playing){
 			if(check.key==input_key){
 				if(check.off==-1){ // note already being played
-					System.out.println("key: "+input_key);
-					System.out.println("timestamp: "+timestamp);
-					System.out.println("notes: "+notes_playing);
-					return;
+					// assume this is a drum beat
+					check.sustain = false;
+					break;
 				}
 			}
 		}
@@ -29,8 +28,12 @@ public class Channel{
 		int i = 0;
 		for(Note check:notes_playing){
 			if(check.key==key){
-				notes_playing.get(i).off = timestamp;
-				return;
+				if(check.sustain)continue;
+				if(check.off==-1)
+				{
+					notes_playing.get(i).off = timestamp;
+					return;
+				}
 			}
 			i++;
 		}

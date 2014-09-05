@@ -18,7 +18,7 @@ public class Container{
 		int i= 0;
 		System.out.println(channels);
 		for(Integer key : channels.keySet()){
-			System.out.println("doing "+(i++));
+			// System.out.println("doing "+(i++));
 			running+=channels.get(key).toString()+"\n\n------\n\n";
 		}
 		return running;
