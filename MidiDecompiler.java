@@ -81,6 +81,9 @@ public class MidiDecompiler {
 			// new Scanner(System.in).next();
 		}
 		
+		
+		// kerry write here
+		
 		// write data to file
 		// return Song;
 	}
