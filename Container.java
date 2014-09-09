@@ -2,7 +2,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class Container{
-	private Map<Integer, Channel> channels = new HashMap<Integer, Channel>();
+	public Map<Integer, Channel> channels = new HashMap<Integer, Channel>();
 	public Channel get(int input){
 		Integer chan_key = new Integer(input);
 		if(channels.containsKey(chan_key)){

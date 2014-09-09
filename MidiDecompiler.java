@@ -10,8 +10,8 @@ public class MidiDecompiler {
 	public static final String[] NOTES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 	
 	public static void main(String _args[]) throws InvalidMidiDataException, IOException, MidiUnavailableException {
-		
-		Sequence sequence = MidiSystem.getSequence(new File("journeyMIDI.mid"));
+		String fileName = _args[0];
+		Sequence sequence = MidiSystem.getSequence(new File(fileName));
 		// write all midi data to file for fast scanning
 		
 		//Get all tracks/instruments in MIDI
@@ -83,7 +83,7 @@ public class MidiDecompiler {
 		
 		
 		// kerry write here
-		
+		MidiConverter convertDatShit = new MidiConverter(Song, fileName);
 		// write data to file
 		// return Song;
 	}

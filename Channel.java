@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class Channel{
 	public int value;
 	public boolean VALID;
-	private ArrayList<Note> notes_playing = new ArrayList<Note>();
+	public ArrayList<Note> notes_playing = new ArrayList<Note>();
 	public Channel(int _chan){
 		value = _chan;
 		VALID = true;
@@ -15,7 +15,7 @@ public class Channel{
 		for(Note check:notes_playing){
 			if(check.key==input_key){
 				if(check.off==-1){ // note already being played
-					// assume this is a drum beat
+
 					check.sustain = false;
 					break;
 				}
