@@ -1,3 +1,7 @@
 javac MidiDecompiler.java
-java MidiDecompiler journeyMIDI.mid
+cd midiFiles
+for /r %%i in (*) do (
+	
+	java MidiDecompiler %%i %%i
+)
 pause
