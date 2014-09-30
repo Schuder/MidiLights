@@ -8,6 +8,7 @@ import javax.swing.table.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Vector;
 import java.lang.*;
 public class MidiGUI {
 
@@ -62,57 +63,71 @@ public class MidiGUI {
 		
     addMidi.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        String midiPath = openFileExplorer(frame);
-        if(!midiPath.equals("lul nope")) {
-          model.addRow(new Object[]{midiPath});
+        String midiPaths[] = openFileExplorer(frame);
+        
+        if(midiPaths.length == 0) {
+          JOptionPane.showMessageDialog(null, "No MIDIs Selected!");
+          return;
         }
-        else {
-          JOptionPane.showMessageDialog(null, "My Goodness, this is so not a MIDI");
+        
+        for(String path : midiPaths) {
+          model.addRow(new Object[]{path});
         }
+        
       }
     });
     
     removeMidi.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         int selected[] = table.getSelectedRows();
-        System.out.println(Arrays.toString(table.getSelectedRows()));
-        for(int r : selected) {
-          model.removeRow(r);
-        }
+        
+        Vector data = model.getDataVector();
+        Object rows[] = data.toArray();
+        System.out.println(Arrays.toString(rows));
+        
       }
     });
     
     exportMidi.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-
+        
       }
     });
 		
 	}
 	
-	public static String openFileExplorer(JFrame frame) {
+	public static String[] openFileExplorer(JFrame frame) {
 	
 		JFileChooser fileChooser = new JFileChooser();
-		
+		fileChooser.setMultiSelectionEnabled(true);
     FileNameExtensionFilter filter = new FileNameExtensionFilter("MIDI", "mid");
     fileChooser.setFileFilter(filter);
 		
 		fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+		
+		String filePaths[] = {};
+		
 		int result = fileChooser.showOpenDialog(frame);
 		
 		if (result == JFileChooser.APPROVE_OPTION) {
-			File selectedFile = fileChooser.getSelectedFile();
-			System.out.println("Selected file: " + selectedFile.getAbsolutePath());
-			if(selectedFile.getAbsolutePath().endsWith(".mid")) {
-			  return selectedFile.getAbsolutePath();
-			}
+			File selectedFiles[] = fileChooser.getSelectedFiles();
+			List<String> validFiles = new ArrayList<String>();
+			
+      for(File f : selectedFiles) {
+        String path = f.getAbsolutePath();
+        System.out.println(path);
+  			if(path.endsWith(".mid")) {
+  			  validFiles.add(path);
+  			}
+      }
+      
+      filePaths = new String[validFiles.size()];
+      validFiles.toArray(filePaths);
+      
 		}
-		return "lul nope";
+		
+		return filePaths;
+		
 	}
 	
-  public void keyPressed(KeyEvent e) {
-    if(e.getKeyCode() == KeyEvent.VK_DELETE) {
-      System.out.println("delete");
-    }
-  }
 }
