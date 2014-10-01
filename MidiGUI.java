@@ -79,11 +79,12 @@ public class MidiGUI {
     
     removeMidi.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+        
         int selected[] = table.getSelectedRows();
         
-        Vector data = model.getDataVector();
-        Object rows[] = data.toArray();
-        System.out.println(Arrays.toString(rows));
+        for(int i = selected.length-1; i>=0; i--) {
+          model.removeRow(selected[i]);
+        }
         
       }
     });
@@ -116,7 +117,7 @@ public class MidiGUI {
       for(File f : selectedFiles) {
         String path = f.getAbsolutePath();
         System.out.println(path);
-  			if(path.endsWith(".mid")) {
+  			if(path.toLowerCase().endsWith(".mid")) {
   			  validFiles.add(path);
   			}
       }
