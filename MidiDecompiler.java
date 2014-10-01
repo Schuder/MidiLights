@@ -6,12 +6,11 @@ public class MidiDecompiler {
 	public static final int NOTE_ON = 0x90;
 	public static final int NOTE_OFF = 224;
 	public static final String[] NOTES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+
 	public static void main(String _args[]) throws InvalidMidiDataException, IOException, MidiUnavailableException {
-		if(_args.length!=2){
-			return;
-		}
-		String fileName = _args[0];
-		String outFolder = _args[1];
+		MidiDecompiler instance = new MidiDecompiler(_args[0], _args[1]);
+	}
+	public MidiDecompiler(String fileName, String outFile) throws InvalidMidiDataException, IOException, MidiUnavailableException {
 		Sequence sequence = MidiSystem.getSequence(new File(fileName));
 		// write all midi data to file for fast scanning
 		//System.out.println(60000/(24*126.4));
@@ -122,7 +121,7 @@ public class MidiDecompiler {
 
 
 		// kerry write here
-		MidiConverter convertDatShit = new MidiConverter(Song, secondsPerTick, fileName, outFolder);
+		MidiConverter convertDatShit = new MidiConverter(Song, secondsPerTick, fileName, outFile);
 		// write data to file
 		// return Song;
 	}

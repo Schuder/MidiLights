@@ -5,12 +5,12 @@ public class MidiConverter {
 
 	public ArrayList<Container> tracks;
 
-	public MidiConverter(ArrayList<Container> song, float tempo, String inputFile, String outputFolder) throws IOException {
+	public MidiConverter(ArrayList<Container> song, float tempo, String inputFile, String outputFile) throws IOException {
 
 		int i = 0;
 		this.tracks = song;
-		new File(outputFolder).mkdir();
-		PrintWriter file = new PrintWriter(new File(outputFolder+"/out.lites"));
+		new File(outputFile).mkdir();
+		PrintWriter file = new PrintWriter(new File(outputFile));
 		file.println(tempo);
 		for(Container t : tracks) {
 

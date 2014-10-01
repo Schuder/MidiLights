@@ -91,7 +91,27 @@ public class MidiGUI {
     
     exportMidi.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+		int result = fileChooser.showOpenDialog(frame);
+		if (result == JFileChooser.APPROVE_OPTION) {
+			File output = fileChooser.getSelectedFile();
+			Object table[] = model.getDataVector().toArray();
+			ArrayList<String> paths = new ArrayList<String>();
+			for(Object obj : table) {
+				paths.add(obj.toString().replace("[","").replace("]",""));
+			}
+			try{
+				MidiExporter exp = new MidiExporter(paths, output.getAbsolutePath());
+			}catch(Exception exception){
+				JOptionPane.showMessageDialog(null, "Unknown errorrrrrrrrrrrr!");
+			}
+		}
+		else
+		{
+          JOptionPane.showMessageDialog(null, "Cannot export to there!");
+		}
       }
     });
 		
