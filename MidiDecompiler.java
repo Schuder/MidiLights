@@ -13,10 +13,10 @@ public class MidiDecompiler {
 	public MidiDecompiler(String fileName, String outFile) throws InvalidMidiDataException, IOException, MidiUnavailableException {
 		Sequence sequence = MidiSystem.getSequence(new File(fileName));
 		// write all midi data to file for fast scanning
-		//System.out.println(60000/(24*126.4));
+		//// System.out.println(60000/(24*126.4));
 		//Get all tracks/instruments in MIDI
-		System.out.println("PPQ: " + sequence.PPQ);
-		System.out.println("RESOLUTION: " + sequence.getResolution());
+		// System.out.println("PPQ: " + sequence.PPQ);
+		// System.out.println("RESOLUTION: " + sequence.getResolution());
 		int resolution = sequence.getResolution();
 		float secondsPerTick = -1;
 		boolean tempoFlag = false;
@@ -44,13 +44,13 @@ public class MidiDecompiler {
 			// output in main output line above current key values
 			// then in class functions output also to make sure correct
 						if(velocity>10){ // note is turned on
-							// System.out.println("start:"+channel+","+key+";"+timestamp);
+							// // System.out.println("start:"+channel+","+key+";"+timestamp);
 							cur_track.get(channel).Start(key, timestamp);
 						}
 						else{ // 10 is arbitrary number within audible level
 							 // anything less is too quite to hear
 							// so we just assume note is turned off
-							// System.out.println("stop:"+channel+","+key+";"+timestamp);
+							// // System.out.println("stop:"+channel+","+key+";"+timestamp);
 							cur_track.get(channel).Stop(key, timestamp);
 						}
 					}
@@ -60,7 +60,7 @@ public class MidiDecompiler {
 						int note = key % 12;
 						String noteName = NOTES[note];
 						int velocity = sm.getData2();
-						// System.out.println("noteOFF:"+channel+","+key+";"+timestamp);
+						// // System.out.println("noteOFF:"+channel+","+key+";"+timestamp);
 						cur_track.get(channel).Stop(key, timestamp);
 					}
 
@@ -93,28 +93,28 @@ public class MidiDecompiler {
 							formatter.format("%02x", b);
 						}
 						String hex = formatter.toString();
-						System.out.println("HEX: " + hex);
+						// System.out.println("HEX: " + hex);
 						int tempo = Integer.parseInt(hex, 16);
-						System.out.println("TEMPO: " + tempo);
+						// System.out.println("TEMPO: " + tempo);
 
 						float bpm = 60000000 / (float)tempo;
-						System.out.println("BPM: " + bpm);
+						// System.out.println("BPM: " + bpm);
 
 						float ppq = resolution;
 
 						float mspt = 60000 / (bpm*ppq);
-						System.out.println("MS PER TICK: " + mspt);
-						System.out.println("TICKS PER S: " + (1000/mspt));
+						// System.out.println("MS PER TICK: " + mspt);
+						// System.out.println("TICKS PER S: " + (1000/mspt));
 						secondsPerTick = mspt/1000;
 						tempoFlag = true;
 
 					}
 
 
-					System.out.println(mm.getType()+" "+output);
+					// System.out.println(mm.getType()+" "+output);
 				}
 			}
-			// System.out.println(cur_track.toString());
+			// // System.out.println(cur_track.toString());
 			Song.add(cur_track);
 			// new Scanner(System.in).next();
 		}

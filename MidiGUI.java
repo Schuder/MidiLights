@@ -71,7 +71,9 @@ public class MidiGUI {
         }
         
         for(String path : midiPaths) {
-          model.addRow(new Object[]{path});
+		  if(true){ // check if file aready exists
+			model.addRow(new Object[]{path});
+		  }
         }
         
       }
@@ -93,7 +95,7 @@ public class MidiGUI {
       public void actionPerformed(ActionEvent e) {
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+		fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
 		int result = fileChooser.showOpenDialog(frame);
 		if (result == JFileChooser.APPROVE_OPTION) {
 			File output = fileChooser.getSelectedFile();
@@ -124,7 +126,8 @@ public class MidiGUI {
     FileNameExtensionFilter filter = new FileNameExtensionFilter("MIDI", "mid");
     fileChooser.setFileFilter(filter);
 		
-		fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+		System.out.println(System.getProperty("user.dir"));
+		fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
 		
 		String filePaths[] = {};
 		

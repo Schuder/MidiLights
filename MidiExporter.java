@@ -23,7 +23,7 @@ public class MidiExporter {
 			}
 			else if(path.charAt(i)=='\\')
 			{
-				startLoc = i;
+				startLoc = i+1;
 				break;
 			}
 		}
@@ -31,11 +31,9 @@ public class MidiExporter {
 	}
 	public MidiExporter(ArrayList<String> midiFilePaths, String outputDirectory) throws InvalidMidiDataException, IOException, MidiUnavailableException{
 		for(String midi : midiFilePaths){
-			System.out.println("\n\nrunning once");
-			System.out.println(midi);
-			System.out.println("\n\n\n");
 			String zoom = crop_file_name(midi);
-			new MidiDecompiler(midi, outputDirectory+"/MidiLites/"+zoom+".lites");
+			new File(outputDirectory+"\\MidiLites").mkdir();
+			new MidiDecompiler(midi, outputDirectory+"\\MidiLites\\"+zoom+".lites");
 		}
 		JOptionPane.showMessageDialog(null, "Conversion done!!");
 	}
