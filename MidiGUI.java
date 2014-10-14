@@ -29,7 +29,7 @@ public class MidiGUI {
 		JMenuBar menuBar;
 		JMenu menu, submenu;
 		JMenuItem menuItem, menuItem2;
-		
+
 		menuBar = new JMenuBar();
 		
 		JButton addMidi = new JButton(new ImageIcon("plus-circle.png"));
@@ -37,6 +37,9 @@ public class MidiGUI {
 		
 		JButton removeMidi = new JButton(new ImageIcon("minus-circle.png"));
 		menuBar.add(removeMidi);
+		
+		JButton emulateMidi = new JButton(new ImageIcon("emulator.png"));
+		menuBar.add(emulateMidi);
 		
 		JButton exportMidi = new JButton(new ImageIcon("export.png"));
 		menuBar.add(exportMidi);
@@ -114,6 +117,12 @@ public class MidiGUI {
 		{
           JOptionPane.showMessageDialog(null, "Cannot export to there!");
 		}
+      }
+    });
+    
+    emulateMidi.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        //LitesEmulator = new LitesEmulator
       }
     });
 		
