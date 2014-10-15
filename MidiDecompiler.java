@@ -5,24 +5,21 @@ import java.lang.*;
 public class MidiDecompiler {
 	public static final int NOTE_ON = 0x90;
 	public static final int NOTE_OFF = 224;
+	private ArrayList<Container> Song;
+	private float Tempo = 0;
 	public static final String[] NOTES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 
 	public static void main(String _args[]) throws InvalidMidiDataException, IOException, MidiUnavailableException {
-		MidiDecompiler instance = new MidiDecompiler(_args[0], _args[1]);
+		MidiDecompiler instance = new MidiDecompiler(_args[0]);
 	}
-	public MidiDecompiler(String fileName, String outFile) throws InvalidMidiDataException, IOException, MidiUnavailableException {
+	public MidiDecompiler(String fileName) throws InvalidMidiDataException, IOException, MidiUnavailableException {
 		Sequence sequence = MidiSystem.getSequence(new File(fileName));
-		// write all midi data to file for fast scanning
-		//// System.out.println(60000/(24*126.4));
-		//Get all tracks/instruments in MIDI
-		// System.out.println("PPQ: " + sequence.PPQ);
-		// System.out.println("RESOLUTION: " + sequence.getResolution());
 		int resolution = sequence.getResolution();
 		float secondsPerTick = -1;
 		boolean tempoFlag = false;
 		Track tracks[] = sequence.getTracks();
 		int iterator = 0;
-		ArrayList<Container> Song = new ArrayList<Container>();
+		Song = new ArrayList<Container>();
 		for(Track track : tracks) {
 			Container cur_track = new Container();
 			//Loop through every MIDIEvent in track
@@ -105,7 +102,7 @@ public class MidiDecompiler {
 						float mspt = 60000 / (bpm*ppq);
 						// System.out.println("MS PER TICK: " + mspt);
 						// System.out.println("TICKS PER S: " + (1000/mspt));
-						secondsPerTick = mspt/1000;
+						Tempo = mspt/1000;
 						tempoFlag = true;
 
 					}
@@ -118,11 +115,22 @@ public class MidiDecompiler {
 			Song.add(cur_track);
 			// new Scanner(System.in).next();
 		}
-
-
-		// kerry write here
-		MidiConverter convertDatShit = new MidiConverter(Song, secondsPerTick, fileName, outFile);
-		// write data to file
-		// return Song;
+	}
+	public void Export(String outputFile) throws IOException {
+		int i = 0;
+		PrintWriter file = new PrintWriter(new File(outputFile));
+		file.println(Tempo);
+		for(Container t : Song){
+			String line = "";
+			for(int key : t.channels.keySet()){
+				ArrayList<Note> notes = t.channels.get(key).notes_playing;
+				for(Note n : notes) {
+					if(n.off==-1)n.off = n.on+10;
+					line+= n.on + " " + n.off + " " + n.key + " ";
+				}
+			}
+			file.println(line);
+		}
+		file.close();
 	}
 }
