@@ -1,15 +1,29 @@
-import TurtleGraphics.*;
-import java.awt.Color;
+import java.awt.*;
+import javax.swing.*;
 
-public class LitesEmulator
-{
-	public static void main(String[] args)
-	{
-		Pen p = new StandardPen();
-		Shape s = new Triangle(20, 20, 20, 10, 0, 8);
-		s.draw(p);
-		s = new Triangle(-20, -20, -20, -10, 0, -8);
-		s.stretchBy(2);
-		s.draw(p);
-	}
+public class LitesEmulator extends JPanel {
+  
+  public LitesEmulator(MidiDecompiler decomp) {
+    //this.setBackground(Color.BLACK);
+    this.setLayout(new GridLayout(2,8));
+    
+    //array of panels 16 for lights
+    for(int i = 0; i < 16; i++) {
+      JPanel pane = new JPanel();
+      if(i%2 == 0 && i < 8) {
+        pane.setBackground(Color.BLACK);
+      }
+      else if(i%2 != 0 && i < 8) {
+       pane.setBackground(Color.WHITE);
+      }
+      else if(i%2 == 0 && i > 7) {
+        pane.setBackground(Color.WHITE);
+      }
+      else {
+        pane.setBackground(Color.BLACK);
+      }
+      this.add(pane);
+    }
+  }
+  
 }
