@@ -1,5 +1,7 @@
 import java.util.Map;
 import java.util.HashMap;
+import java.awt.*;
+import javax.swing.*;
 
 public class Container{
 	public Map<Integer, Channel> channels = new HashMap<Integer, Channel>();
@@ -22,5 +24,9 @@ public class Container{
 			running+=channels.get(key).toString()+"\n\n------\n\n";
 		}
 		return running;
+	}
+	public void draw(Graphics g, int x, int y, int w, int h){
+		
+		g.fillRect(x, y, w, h);
 	}
 }
