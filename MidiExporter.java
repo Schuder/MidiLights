@@ -33,8 +33,7 @@ public class MidiExporter {
 		for(String midi : midiFilePaths){
 			String zoom = crop_file_name(midi);
 			new File(outputDirectory+"\\MidiLites").mkdir();
-			MidiDecompiler data = new MidiDecompiler(midi);
-			data.Export(outputDirectory+"\\MidiLites\\"+zoom+".lites");
+			new MidiDecompiler(midi, outputDirectory+"\\MidiLites\\"+zoom+".lites");
 		}
 		JOptionPane.showMessageDialog(null, "Conversion done!!");
 	}
