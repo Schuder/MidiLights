@@ -1,12 +1,13 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.*;
+import javax.sound.midi.*;
+import java.awt.event.*;
 
 public class LitesEditor {
   
-  public static final JFrame frame = new JFrame("SWAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGE");
-  
-  public LitesEditor (String filePath) {
-    
+  public LitesEditor (String filePath) throws InvalidMidiDataException, MidiUnavailableException, IOException {
+    JFrame frame = new JFrame(filePath);
     frame.setSize(400,400);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		
@@ -15,8 +16,8 @@ public class LitesEditor {
 		
     JMenuBar menuBar = new JMenuBar();
     
-		JButton run = new JButton(new ImageIcon("play-circle.png"));
-		menuBar.add(run);
+		JButton runLites = new JButton(new ImageIcon("play-circle.png"));
+		menuBar.add(runLites);
     
     mainPane.add(menuBar);
     
@@ -29,6 +30,13 @@ public class LitesEditor {
     frame.add(mainPane);
     
     frame.setVisible(true);
+    
+    runLites.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e){
+
+      }
+    });
+    
   }
   
 }

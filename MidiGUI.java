@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Vector;
 import java.lang.*;
+import javax.sound.midi.*;
 public class MidiGUI {
 
   public static final DefaultTableModel model = new DefaultTableModel() {
@@ -121,8 +122,22 @@ public class MidiGUI {
     });
     
     emulateMidi.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        LitesEditor editor = new LitesEditor();
+      public void actionPerformed(ActionEvent e){
+        try {
+          String editDat;
+          System.out.println(table.getSelectedRow());
+          if(table.getSelectedRow() == -1) {
+            JOptionPane.showMessageDialog(null, "No MIDI selected you fuck!");
+            return;
+          }
+          editDat = (String) table.getValueAt(table.getSelectedRow(), 0);
+          LitesEditor editor = new LitesEditor(editDat);
+        }
+        catch (InvalidMidiDataException | MidiUnavailableException | IOException ex) {
+          System.out.println(ex);
+          JOptionPane.showMessageDialog(null, "No MIDI selected you fuck!");
+        }
+        
       }
     });
 		
