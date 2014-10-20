@@ -5,9 +5,10 @@ import javax.sound.midi.*;
 import java.awt.event.*;
 
 public class LitesEditor {
-  public static final JFrame frame = new JFrame("Lites Editor");
+  public static JFrame frame;
 
   public LitesEditor (String filePath) throws InvalidMidiDataException, MidiUnavailableException, IOException {
+    frame = new JFrame(filePath);
     frame.setSize(968,625);
 		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		frame.setResizable(false);

@@ -131,9 +131,10 @@ public class MidiGUI {
             return;
           }
           editDat = (String) table.getValueAt(table.getSelectedRow(), 0);
+          System.out.println(table.getSelectedRow());
           LitesEditor editor = new LitesEditor(editDat);
         }
-        catch (InvalidMidiDataException | MidiUnavailableException | IOException ex) {
+        catch (Exception ex) {
           System.out.println(ex);
           JOptionPane.showMessageDialog(null, "No MIDI selected");
         }
