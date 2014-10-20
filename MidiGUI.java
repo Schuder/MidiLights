@@ -134,9 +134,17 @@ public class MidiGUI {
           System.out.println(table.getSelectedRow());
           LitesEditor editor = new LitesEditor(editDat);
         }
-        catch (Exception ex) {
+        catch (IOException ex) {
           System.out.println(ex);
           JOptionPane.showMessageDialog(null, "No MIDI selected");
+        }
+        catch (InvalidMidiDataException ex) {
+          System.out.println(ex);
+          JOptionPane.showMessageDialog(null, "Error 404 See Google!");
+        }
+        catch (MidiUnavailableException ex) {
+          System.out.println(ex);
+          JOptionPane.showMessageDialog(null, "Error 404 See Google!");
         }
         
       }
