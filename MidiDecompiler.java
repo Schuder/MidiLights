@@ -5,14 +5,16 @@ import java.lang.*;
 public class MidiDecompiler {
 	public static final int NOTE_ON = 0x90;
 	public static final int NOTE_OFF = 224;
-	private ArrayList<Container> Song;
+	public ArrayList<Container> Song;
 	private float Tempo = 0;
 	public static final String[] NOTES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+	public String origin;
 
 	public static void main(String _args[]) throws InvalidMidiDataException, IOException, MidiUnavailableException {
 		MidiDecompiler instance = new MidiDecompiler(_args[0]);
 	}
 	public MidiDecompiler(String fileName) throws InvalidMidiDataException, IOException, MidiUnavailableException {
+	  this.origin = fileName;
 		Sequence sequence = MidiSystem.getSequence(new File(fileName));
 		int resolution = sequence.getResolution();
 		float secondsPerTick = -1;
@@ -79,8 +81,8 @@ public class MidiDecompiler {
 
 						}
 
-						output = str;
-
+					 	output = str;
+					 	cur_track.instrument = output;
 
 					}
 					if(type == 81 && !tempoFlag) {
@@ -122,7 +124,9 @@ public class MidiDecompiler {
 		file.println(Tempo);
 		for(Container t : Song){
 			String line = "";
+			line+=(i++) + " " + t.instrument + " : ";
 			for(int key : t.channels.keySet()){
+			  
 				ArrayList<Note> notes = t.channels.get(key).notes_playing;
 				for(Note n : notes) {
 					if(n.off==-1)n.off = n.on+10;

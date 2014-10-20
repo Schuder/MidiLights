@@ -26,7 +26,7 @@ public class MidiGUI {
 	
 		frame.setSize(400,400);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		
+		frame.setResizable(false);
 		JMenuBar menuBar;
 		JMenu menu, submenu;
 		JMenuItem menuItem, menuItem2;
@@ -39,8 +39,8 @@ public class MidiGUI {
 		JButton removeMidi = new JButton(new ImageIcon("minus-circle.png"));
 		menuBar.add(removeMidi);
 		
-		JButton emulateMidi = new JButton(new ImageIcon("emulator.png"));
-		menuBar.add(emulateMidi);
+		JButton editMidi = new JButton(new ImageIcon("emulator.png"));
+		menuBar.add(editMidi);
 		
 		JButton exportMidi = new JButton(new ImageIcon("export.png"));
 		menuBar.add(exportMidi);
@@ -121,13 +121,13 @@ public class MidiGUI {
       }
     });
     
-    emulateMidi.addActionListener(new ActionListener() {
+    editMidi.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e){
         try {
           String editDat;
           System.out.println(table.getSelectedRow());
           if(table.getSelectedRow() == -1) {
-            JOptionPane.showMessageDialog(null, "No MIDI selected you fuck!");
+            JOptionPane.showMessageDialog(null, "No MIDI selected");
             return;
           }
           editDat = (String) table.getValueAt(table.getSelectedRow(), 0);
@@ -135,7 +135,7 @@ public class MidiGUI {
         }
         catch (InvalidMidiDataException | MidiUnavailableException | IOException ex) {
           System.out.println(ex);
-          JOptionPane.showMessageDialog(null, "No MIDI selected you fuck!");
+          JOptionPane.showMessageDialog(null, "No MIDI selected");
         }
         
       }

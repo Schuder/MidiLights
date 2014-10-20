@@ -5,6 +5,7 @@ import javax.swing.*;
 
 public class Container{
 	public Map<Integer, Channel> channels = new HashMap<Integer, Channel>();
+	public String instrument;
 	public Channel get(int input){
 		Integer chan_key = new Integer(input);
 		if(channels.containsKey(chan_key)){
