@@ -135,12 +135,16 @@ public class LitesEmulator extends JPanel {
 		ArrayList<JPanel> outputs = new ArrayList<JPanel>();
 		for(int i=0;i<16;i++){
 			JPanel pane = new JPanel();
+      JLabel id = new JLabel("" + i);
+      id.setFont(new Font("Verdana",1,60));
+      pane.add(id);
 			if((i+i/8)%2==0){
 				pane.setBackground(Color.GRAY);
 			}else{
 				pane.setBackground(Color.WHITE);
 			}
 			this.add(pane);
+			
 			outputs.add(pane);
 		}
 		updater.start();
