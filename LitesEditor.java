@@ -24,12 +24,12 @@ public class LitesEditor {
 		JButton runLites = new JButton(new ImageIcon("play-circle.png"));
 		menuBar.add(runLites);
     
-    MidiDecompiler decompiler = new MidiDecompiler(filePath);
-    
-    LitesEmulator emulator = new LitesEmulator(decompiler);
+    SongData song = MidiDecompiler.cropTracks(MidiDecompiler.decompile(filePath));
+    final LitesEmulator emulator = new LitesEmulator(mainPane);
     mainPane.add(emulator);
+	emulator.run(song);
     
-    TrackEditor editor = new TrackEditor(decompiler);
+    TrackEditor editor = new TrackEditor(song);
     mainPane.add(editor);
     
     frame.setJMenuBar(menuBar);
@@ -39,57 +39,41 @@ public class LitesEditor {
     
     runLites.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e){
-        MidiDecompiler edit = TrackEditor.getEdit();
+        SongData edit = TrackEditor.getEdit();
+		emulator.run(edit);
       }
     });
     
     saveLites.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(ActionEvent e) {
+			emulator.die();
     		JFileChooser fileChooser = new JFileChooser();
     		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     		fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
     		int result = fileChooser.showOpenDialog(frame);
     		if (result == JFileChooser.APPROVE_OPTION) {
-    		  
-    			File output = fileChooser.getSelectedFile();
-          String outputDirectory = output.getAbsolutePath();
-          MidiDecompiler data = TrackEditor.getEdit();
+				File output = fileChooser.getSelectedFile();
+				String outputDirectory = output.getAbsolutePath();
+				SongData data = TrackEditor.getEdit();
 
-    			String zoom = crop_file_name(data.origin);
-    			new File(outputDirectory+"\\MidiLites").mkdir();
-          
-          try {
-      			data.Export(outputDirectory+"\\MidiLites\\"+zoom+".lites");
-          }catch (IOException ex) {
-            System.out.println(ex);
-          }
-          JOptionPane.showMessageDialog(null, "Conversion done!!");
+				String name = MidiDecompiler.cropFileName(data.origin);
+				new File(outputDirectory+"\\MidiLites").mkdir();
+
+				try{
+					MidiDecompiler.ExportByTrack(data, outputDirectory+"\\MidiLites\\"+name+".lites");
+				}catch(IOException ex){
+					System.out.println(ex);
+				}
+				JOptionPane.showMessageDialog(null, "Conversion done!!");
+    		}else{
+				JOptionPane.showMessageDialog(null, "Cannot export to there!");
     		}
-    		else
-    		{
-              JOptionPane.showMessageDialog(null, "Cannot export to there!");
-    		}
-    		frame.dispose();
-      }
-    });
-    
-  }
-  
-	private String crop_file_name(String path){
-		int endLoc=-1,startLoc=-1;
-		for(int i=path.length()-1;i>0;i--)
-		{
-			if(path.charAt(i)=='.')
-			{
-				endLoc = i;
-			}
-			else if(path.charAt(i)=='\\')
-			{
-				startLoc = i+1;
-				break;
-			}
+			frame.dispose();
 		}
-		return path.substring(startLoc,endLoc);
-	}
-  
+    });
+  }
+ 
+ public static void main (String args[]) throws InvalidMidiDataException, MidiUnavailableException, IOException {
+	LitesEditor temp = new LitesEditor(args[0]);
+  }
 }

@@ -14,16 +14,15 @@ import javax.sound.midi.*;
 
 public class TrackEditor extends JPanel {
   
-  public static MyTableModel model;
+  public static TrackListing model;
   public static JTable table;
   
-  public TrackEditor(MidiDecompiler decompiler) {
-    model = new MyTableModel();
+  public TrackEditor(SongData song) {
+    model = new TrackListing(song);
     table = new JTable(model);
     model.setRowCount(0);
     model.addColumn("Tracks");
     model.addColumn("Instruments");
-    model.setDecompiler(decompiler);
     table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     table.setDragEnabled(true);
     table.setDropMode(DropMode.USE_SELECTION);
@@ -65,7 +64,7 @@ public class TrackEditor extends JPanel {
             }
     
             JTable table=(JTable)support.getComponent();
-            MyTableModel tableModel=(MyTableModel)table.getModel();
+            TrackListing tableModel=(TrackListing)table.getModel();
               
            JTable.DropLocation dl = (JTable.DropLocation)support.getDropLocation();
     
@@ -97,29 +96,18 @@ public class TrackEditor extends JPanel {
     this.add(table);
     
     int i = 0;
-		for(Container t : decompiler.Song){
-		  model.addRow(new Object[]{Integer.toString(i++), t.instrument});
+		for(String instrument : song.trackNames){
+		  model.addRow(new Object[]{Integer.toString(i++), instrument});
 		}
-    while(i<16) {
-      model.addRow(new Object[]{Integer.toString(i++), ""});
-      decompiler.Song.add(new Container());
-    }
-		// for(int i = 0; i<16; i++) {
-		//   System.out.println("SIZE: " + decompiler.Song.size());
-		//   if(i < decompiler.Song.size()) {
-		//     Container t = decompiler.Song.get(i);
-		//     model.addRow(new Object[]{Integer.toString(i++), t.instrument});
-		//   }
-		//   else {
-		//     model.addRow(new Object[]{Integer.toString(i++), "Empty"});
-		//   }
-		  
-		// }
+    // while(i<16) {
+      // model.addRow(new Object[]{Integer.toString(i++), ""});
+      // decompiler.Song.add(new Container());
+    // }
     
   }
   
-  public static MidiDecompiler getEdit() {
-    return model.getDecompiler();
+  public static SongData getEdit() {
+    return model.getEdit();
   }
   
 }

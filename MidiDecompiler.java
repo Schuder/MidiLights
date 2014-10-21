@@ -2,91 +2,60 @@ import java.io.*;
 import javax.sound.midi.*;
 import java.util.*;
 import java.lang.*;
+
 public class MidiDecompiler {
 	public static final int NOTE_ON = 0x90;
 	public static final int NOTE_OFF = 224;
-	public ArrayList<Container> Song;
-	private float Tempo = 0;
-	public static final String[] NOTES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
-	public String origin;
 
-	public static void main(String _args[]) throws InvalidMidiDataException, IOException, MidiUnavailableException {
-		MidiDecompiler instance = new MidiDecompiler(_args[0]);
-	}
-	public MidiDecompiler(String fileName) throws InvalidMidiDataException, IOException, MidiUnavailableException {
-	  this.origin = fileName;
+	public static SongData decompile(String fileName) throws InvalidMidiDataException, IOException, MidiUnavailableException {
+		SongData Song = new SongData(fileName);
 		Sequence sequence = MidiSystem.getSequence(new File(fileName));
 		int resolution = sequence.getResolution();
 		float secondsPerTick = -1;
 		boolean tempoFlag = false;
 		Track tracks[] = sequence.getTracks();
-		int iterator = 0;
-		Song = new ArrayList<Container>();
-		for(Track track : tracks) {
-			Container cur_track = new Container();
+		for(Track midiTrackData : tracks) {
+			int trackIndex = Song.addTrack();
 			//Loop through every MIDIEvent in track
-			for(int i = 0; i < track.size(); i++) {
-				MidiEvent event = track.get(i);
+			for(int i = 0; i < midiTrackData.size(); i++) {
+				MidiEvent event = midiTrackData.get(i);
 				long timestamp = event.getTick();
 				MidiMessage message = event.getMessage();
 				//Short Messages are what notes are, plus some extra effect stuff.
 				if(message instanceof ShortMessage) {
 					ShortMessage sm = (ShortMessage) message;
 					int cmd = sm.getCommand();
-					int channel = sm.getChannel();
+					short channel = (short)sm.getChannel();
 					if(cmd == NOTE_ON) {
 						int key = sm.getData1();
-						int octave = (key/12) - 1;
-						int note = key % 12;
-						String noteName = NOTES[note];
 						int velocity = sm.getData2();
-			// output in main output line above current key values
-			// then in class functions output also to make sure correct
 						if(velocity>10){ // note is turned on
-							// // System.out.println("start:"+channel+","+key+";"+timestamp);
-							cur_track.get(channel).Start(key, timestamp);
+							Song.addNote(channel, trackIndex, new Note(key, timestamp));
 						}
 						else{ // 10 is arbitrary number within audible level
 							 // anything less is too quite to hear
 							// so we just assume note is turned off
-							// // System.out.println("stop:"+channel+","+key+";"+timestamp);
-							cur_track.get(channel).Stop(key, timestamp);
+							Song.endNote(trackIndex, key, timestamp);
 						}
 					}
 					else if(cmd == NOTE_OFF) {
 						int key = sm.getData1();
-						int octave = (key/12) - 1;
-						int note = key % 12;
-						String noteName = NOTES[note];
 						int velocity = sm.getData2();
-						// // System.out.println("noteOFF:"+channel+","+key+";"+timestamp);
-						cur_track.get(channel).Stop(key, timestamp);
+						Song.endNote(trackIndex, key, timestamp);
 					}
-
 				}
 				else if(message instanceof MetaMessage){
 					MetaMessage mm = (MetaMessage) message;
-
 					int type = mm.getType();
 					byte data[] = mm.getData();
-
-					String output = Arrays.toString(data);
-
-					if(type == 3) {
-
-						String str = "";
-						for(byte b : data) {
-
-							str+=(char)b;
-
+					if(type==3){
+						String name = "";
+						for(byte b : data){
+							name+=(char)b;
 						}
-
-					 	output = str;
-					 	cur_track.instrument = output;
-
+					 	Song.trackNames.set(trackIndex, name);
 					}
-					if(type == 81 && !tempoFlag) {
-
+					if(type==81&&!tempoFlag){
 						Formatter formatter = new Formatter();
 						for (byte b : data) {
 							formatter.format("%02x", b);
@@ -104,37 +73,67 @@ public class MidiDecompiler {
 						float mspt = 60000 / (bpm*ppq);
 						// System.out.println("MS PER TICK: " + mspt);
 						// System.out.println("TICKS PER S: " + (1000/mspt));
-						Tempo = mspt/1000;
+						Song.Tempo = mspt/1000;
 						tempoFlag = true;
-
 					}
-
-
-					// System.out.println(mm.getType()+" "+output);
 				}
 			}
-			// // System.out.println(cur_track.toString());
-			Song.add(cur_track);
-			// new Scanner(System.in).next();
+			if(Song.tracks.get(trackIndex).size()==0){
+				Song.trackNames.set(trackIndex, "Empty");
+			}
 		}
+		return Song;
 	}
-	public void Export(String outputFile) throws IOException {
-		int i = 0;
+	public static void ExportByTrack(SongData Song, String outputFile) throws IOException {
 		PrintWriter file = new PrintWriter(new File(outputFile));
-		file.println(Tempo);
-		for(Container t : Song){
+		file.println(Song.Tempo);
+		int i = 0;
+		for(ArrayList<Note> track : Song.tracks){
+			if(Song.trackNames.get(i++).equals("Empty"))continue;
 			String line = "";
-			line+=(i++) + " " + t.instrument + " : ";
-			for(int key : t.channels.keySet()){
-			  
-				ArrayList<Note> notes = t.channels.get(key).notes_playing;
-				for(Note n : notes) {
-					if(n.off==-1)n.off = n.on+10;
-					line+= n.on + " " + n.off + " " + n.key + " ";
-				}
+			for(Note n : track){
+				line += n.on + " " + n.off + " " + n.key + " ";
 			}
 			file.println(line);
 		}
 		file.close();
+	}
+	public static void ExportByChannel(SongData Song, String outputFile) throws IOException {
+		PrintWriter file = new PrintWriter(new File(outputFile));
+		file.println(Song.Tempo);
+		int i = 0;
+		for(ArrayList<Note> chan : Song.channels){
+			String line = "";
+			for(Note n : chan){
+				line += n.on + " " + n.off + " " + n.key + " ";
+			}
+			file.println(line);
+		}
+		file.close();
+	}
+	public static String cropFileName(String path){
+		int endLoc=-1,startLoc=-1;
+		for(int i=path.length()-1;i>0;i--)
+		{
+			if(path.charAt(i)=='.')
+			{
+				endLoc = i;
+			}
+			else if(path.charAt(i)=='\\')
+			{
+				startLoc = i+1;
+				break;
+			}
+		}
+		return path.substring(startLoc,endLoc);
+	}
+	public static SongData cropTracks(SongData input){
+		for(int i=0;i<input.trackNames.size();i++){
+			if(input.trackNames.get(i).equals("Empty")){
+				input.tracks.remove(i);
+				input.trackNames.remove(i--);
+			}
+		}
+		return input;
 	}
 }
