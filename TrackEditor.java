@@ -37,15 +37,31 @@ public class TrackEditor extends JPanel {
 
     splitTrack.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e){
+        if(Integer.parseInt(model.getValueAt(splitTrackId,3).toString()) == 11 && Integer.parseInt(model.getValueAt(splitTrackId, 2).toString()) == 0) {
         if(model.getRowCount() < 16) {
         System.out.println("Splitting" + model.getValueAt(splitTrackId, 1));
-        model.setValueAt("0", splitTrackId, 2);
-        model.setValueAt("5", splitTrackId, 3);
-        model.addRow(new Object[]{model.getRowCount(), model.getValueAt(splitTrackId, 1), 6, 11});
-        model.splitEvent(splitTrackId, model.getRowCount()-1, 0, 5, 6, 11);
+        
+        int minPitch, maxPitch;
+        minPitch = Integer.parseInt(model.getValueAt(splitTrackId, 2).toString());
+        maxPitch = Integer.parseInt(model.getValueAt(splitTrackId, 3).toString());
+        System.out.println(minPitch + " " + maxPitch);
+        
+        int splitMinPitch = (int)Math.ceil(maxPitch*.5), splitMaxPitch = maxPitch;
+        maxPitch = splitMinPitch-1;
+        System.out.println("First: " + minPitch + " " + maxPitch);
+        System.out.println("First: " + splitMinPitch + " " + splitMaxPitch);
+        
+        model.setValueAt(maxPitch, splitTrackId, 3);
+        
+        model.addRow(new Object[]{model.getRowCount(), model.getValueAt(splitTrackId, 1), splitMinPitch, splitMaxPitch});
+        model.splitEvent(model.getValueAt(splitTrackId,1).toString(), splitTrackId, (short)minPitch, (short)maxPitch, (short)splitMinPitch, (short)splitMaxPitch);
         }
         else {
           JOptionPane.showMessageDialog(null, "Too Many Tracks!!!");
+        }
+        }
+        else {
+          JOptionPane.showMessageDialog(null, "Split Too Many Times!@!@!@!@");
         }
       }
     });

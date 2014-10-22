@@ -19,7 +19,7 @@ public class TrackListing extends DefaultTableModel {
 
     @Override
     public boolean isCellEditable(int row, int col) {
-      return (col==2 || col ==3);
+      return false;
     }
 
     public void reorderEvent(int x, int y) {
@@ -31,8 +31,32 @@ public class TrackListing extends DefaultTableModel {
       data.trackNames.set(y, name);
     }
     
-    public void splitEvent(int t1, int t2, int min1, int max1, int min2, int max2) {
-      // data.pitchesFromTrack();
+    public void splitEvent(String trackName, int track, short minPitch, short maxPitch, short splitMinPitch, short splitMaxPitch) {
+      System.out.println("ffffffffffffffuuuuuuck");
+      int splitTrack = data.addTrack();
+      data.trackNames.set(splitTrack,trackName);
+      
+      short pitches[] = new short[(maxPitch-minPitch)+1];
+      
+      for(short i = minPitch; i <= maxPitch; i++) {
+        System.out.println(i-minPitch);
+        pitches[i - minPitch] = i;
+      }
+      
+      ArrayList<Note> track1 = data.pitchesFromTrack(pitches, track);
+      
+      pitches = new short[(splitMaxPitch-splitMinPitch)+1];
+      
+      for(short i = splitMinPitch; i <= splitMaxPitch; i++) {
+        System.out.println(i-splitMinPitch);
+        pitches[i - splitMinPitch] = i;
+      }
+      
+      ArrayList<Note> track2 = data.pitchesFromTrack(pitches, track);
+      
+      data.tracks.set(track, track1);
+      data.tracks.set(splitTrack, track2);
+      
     }
     
     public void removeEvent(int row) {
