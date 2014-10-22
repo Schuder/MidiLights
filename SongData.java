@@ -61,4 +61,18 @@ public class SongData {
 		}
 		return run;
 	}
+	public ArrayList<Note> pitchesFromTrack(short[] pitch, int track){
+		ArrayList<Note> run = new ArrayList<Note>();
+		if(track>=tracks.size())return run;
+		for(Note i : tracks.get(track))
+		for(int p=0;p<pitch.length;p++)
+		if(pitch[p]<=12)
+		for(Note j : pitchClasses.get(pitch[p])){
+			if(i==j){
+				run.add(i);
+				break;
+			}
+		}
+		return run;
+	}
 }

@@ -39,42 +39,43 @@ class JPanelUpdater extends Thread {
 	}
 }
 
-class LightHandler extends Thread {
+class LightOff extends Thread {
 	private Thread t;
 	private String threadName;
 	private JPanel light;
 	private ArrayList<Note> track;
 	public boolean kill = false;
-	private Color defaultColor;
+	private Color changeColor;
 	private CyclicBarrier gate;
+	private float tempo;
 
-	LightHandler(JPanel target, ArrayList<Note> data, String name, CyclicBarrier syncher){
+	LightOff(JPanel target, Color c, ArrayList<Note> data, float timing, String name, CyclicBarrier syncher){
+		changeColor = c;
 		light = target;
 		track = data;
 		threadName = name;
 		gate = syncher;
+		tempo = timing;
 	}
 	public void run(){
 		try{
 			gate.await();
-			boolean on = true;
-			while(!kill){
-				if(on){
-					light.setBackground(defaultColor);
-					on = false;
-				}else{
-					light.setBackground(Color.RED);
-					on = true;
-				}
-				Thread.sleep(1000);
+			int i=0;
+			long last = 0;
+			while(!kill&&i<track.size()){
+				light.setBackground(changeColor);
+				if(track.get(i).off-last>0)
+					Thread.sleep((int)((track.get(i).off-last)*tempo*1000));
+				last = track.get(i++).off;
 			}
 		}catch(Exception e){
 			System.out.println("Thread " + threadName+ " interrupted.");
+			System.out.println(e);
 		}
 		System.out.println("Thread " + threadName+ " exiting.");
+		light.setBackground(Color.BLACK);
 	}
 	public void start(){
-		defaultColor = light.getBackground();
 		System.out.println("Starting " + threadName);
 		if(t==null){
 			t = new Thread(this, threadName);
@@ -82,20 +83,85 @@ class LightHandler extends Thread {
 		}
 	}
 }
+class LightOn extends Thread {
+	private Thread t;
+	private String threadName;
+	private JPanel light;
+	private ArrayList<Note> track;
+	public boolean kill = false;
+	private Color changeColor;
+	private CyclicBarrier gate;
+	private float tempo;
+
+	LightOn(JPanel target, Color c, ArrayList<Note> data, float timing, String name, CyclicBarrier syncher){
+		changeColor = c;
+		light = target;
+		track = data;
+		threadName = name;
+		gate = syncher;
+		tempo = timing;
+	}
+	public void run(){
+		try{
+			gate.await();
+			int i=0;
+			long last = 0;
+			while(!kill&&i<track.size()){
+				light.setBackground(changeColor);
+				if(track.get(i).off-last>0)
+					Thread.sleep((int)((track.get(i).on-last)*tempo*1000));
+				last = track.get(i++).on;
+			}
+		}catch(Exception e){
+			System.out.println("Thread " + threadName+ " interrupted.");
+			System.out.println(e);
+		}
+		System.out.println("Thread " + threadName+ " exiting.");
+		light.setBackground(Color.BLACK);
+	}
+	public void start(){
+		System.out.println("Starting " + threadName);
+		if(t==null){
+			t = new Thread(this, threadName);
+			t.start();
+		}
+	}
+}
+class LightHandler {
+	private LightOn ON;
+	private LightOff OFF;
+
+	LightHandler(JPanel target, ArrayList<Note> data, float timing, int index, CyclicBarrier syncher){
+		ON = new LightOn(target, Color.RED, data, timing, "Light"+index+"on", syncher);
+		OFF = new LightOff(target, target.getBackground(), data, timing, "Light"+index+"off", syncher);
+	}
+	public void start(){
+		if(ON==null||OFF==null)return;
+		ON.start();
+		OFF.start();
+	}
+	public void die(){
+		if(ON==null||OFF==null)return;
+		ON.kill = true;
+		OFF.kill = true;
+	}
+}
 
 class LightBoard {
 	private ArrayList<LightHandler> threads = new ArrayList<LightHandler>();
 	private CyclicBarrier gate;
 	private boolean valid = true;
+	private float tempo;
 
 	LightBoard(){
 		valid = false;
 	}
-	LightBoard(ArrayList<JPanel> lights, ArrayList<ArrayList<Note> > data){
-		gate = new CyclicBarrier(data.size()+1);
+	LightBoard(ArrayList<JPanel> lights, ArrayList<ArrayList<Note> > data, float timing){
+		gate = new CyclicBarrier(data.size()*2+1);
 		int i=0;
+		tempo = timing;
 		for(;i<data.size();i++){
-			threads.add(new LightHandler(lights.get(i), data.get(i), "LightThread"+i, gate));
+			threads.add(new LightHandler(lights.get(i), data.get(i), timing, i, gate));
 		}
 		for(;i<16;i++){
 			lights.get(i).setBackground(Color.BLACK);
@@ -104,7 +170,6 @@ class LightBoard {
 	public void start(){
 		if(!valid)return;
 		for(LightHandler light : threads){
-			light.kill = false;
 			light.start();
 		}
 		try{
@@ -116,7 +181,7 @@ class LightBoard {
 	public void die(){
 		if(!valid)return;
 		for(LightHandler light : threads){
-			light.kill = true;
+			light.die();
 		}
 	}
 }
@@ -135,6 +200,9 @@ public class LitesEmulator extends JPanel {
 		ArrayList<JPanel> outputs = new ArrayList<JPanel>();
 		for(int i=0;i<16;i++){
 			JPanel pane = new JPanel();
+			JLabel id = new JLabel(""+i);
+			id.setFont(new Font("Verdana",1,60));
+			pane.add(id);
 			if((i+i/8)%2==0){
 				pane.setBackground(Color.GRAY);
 			}else{
@@ -144,7 +212,7 @@ public class LitesEmulator extends JPanel {
 			outputs.add(pane);
 		}
 		updater.start();
-		board = new LightBoard(outputs, midiData.tracks);
+		board = new LightBoard(outputs, midiData.tracks, midiData.Tempo);
 		board.start();
 	}
 	public void die(){
