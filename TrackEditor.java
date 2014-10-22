@@ -16,16 +16,79 @@ public class TrackEditor extends JPanel {
   
   public static TrackListing model;
   public static JTable table;
-  
+  public int splitTrackId;
   public TrackEditor(SongData song) {
     model = new TrackListing(song);
     table = new JTable(model);
     model.setRowCount(0);
     model.addColumn("Tracks");
     model.addColumn("Instruments");
+    model.addColumn("PitchStart");
+    model.addColumn("PitchEnd");
     table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     table.setDragEnabled(true);
     table.setDropMode(DropMode.USE_SELECTION);
+    
+    final JPopupMenu pm = new JPopupMenu();
+    JButton deleteTrack = new JButton("Delete Track.");
+    JButton splitTrack = new JButton("Split Track.");
+    pm.add(splitTrack);
+    pm.add(deleteTrack);
+
+    splitTrack.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e){
+        if(model.getRowCount() < 16) {
+        System.out.println("Splitting" + model.getValueAt(splitTrackId, 1));
+        model.addRow(new Object[]{model.getRowCount(), model.getValueAt(splitTrackId, 1), 0,11});
+        model.splitEvent();
+        }
+        else {
+          JOptionPane.showMessageDialog(null, "Too Many Tracks!!!");
+        }
+      }
+    });
+    
+    deleteTrack.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e){
+        model.removeRow(splitTrackId);
+        model.removeEvent(splitTrackId);
+      }
+    });
+
+    table.addMouseListener(new MouseAdapter() {
+    
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                highlightRow(e);
+                doPopup(e);
+            }
+        }
+    
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                highlightRow(e);
+                doPopup(e);
+            }
+        }
+        
+       protected void doPopup(MouseEvent e) {
+            pm.show(e.getComponent(), e.getX(), e.getY());
+        }
+
+        protected void highlightRow(MouseEvent e) {
+            JTable table = (JTable) e.getSource();
+            Point point = e.getPoint();
+            int row = table.rowAtPoint(point);
+            int col = table.columnAtPoint(point);
+            splitTrackId = row;
+            table.setRowSelectionInterval(row, row);
+            table.setColumnSelectionInterval(0, 3);
+        }
+    
+    });
+    
     
     table.setTransferHandler(new TransferHandler(){
       public int originalRow, originalCol;
@@ -71,7 +134,13 @@ public class TrackEditor extends JPanel {
             int row = dl.getRow();
             int col=dl.getColumn();
             Object swapData = tableModel.getValueAt(row,col);
-    
+            Object swapData1 = tableModel.getValueAt(row, col+1);
+            Object swapData2 = tableModel.getValueAt(row, col+2);
+            
+            Object originalData = tableModel.getValueAt(originalRow,originalCol);
+            Object originalData1 = tableModel.getValueAt(originalRow,originalCol+1);
+            Object originalData2 = tableModel.getValueAt(originalRow,originalCol+2);
+            
             String data;
             try {
                 data = (String)support.getTransferable().getTransferData(DataFlavor.stringFlavor);
@@ -82,8 +151,15 @@ public class TrackEditor extends JPanel {
             }
             
             if(col == originalCol && col == 1) {
-              tableModel.setValueAt(data, row, col);
+              tableModel.setValueAt(originalData, row, col);
               tableModel.setValueAt(swapData, originalRow, originalCol);
+              
+              tableModel.setValueAt(originalData1, row, col+1);
+              tableModel.setValueAt(swapData1, originalRow, originalCol+1);
+              
+              tableModel.setValueAt(originalData2, row, col+2);
+              tableModel.setValueAt(swapData2, originalRow, originalCol+2);
+              
               tableModel.reorderEvent(originalRow, row);
               return true;
             }
@@ -97,7 +173,7 @@ public class TrackEditor extends JPanel {
     
     int i = 0;
 		for(String instrument : song.trackNames){
-		  model.addRow(new Object[]{Integer.toString(i++), instrument});
+		  model.addRow(new Object[]{Integer.toString(i++), instrument,0,11});
 		}
     // while(i<16) {
       // model.addRow(new Object[]{Integer.toString(i++), ""});

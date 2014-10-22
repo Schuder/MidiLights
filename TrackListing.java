@@ -19,7 +19,7 @@ public class TrackListing extends DefaultTableModel {
 
     @Override
     public boolean isCellEditable(int row, int col) {
-      return false;
+      return (col==2 || col ==3);
     }
 
     public void reorderEvent(int x, int y) {
@@ -29,6 +29,14 @@ public class TrackListing extends DefaultTableModel {
       data.tracks.set(y, list);
       data.trackNames.set(x, data.trackNames.get(y));
       data.trackNames.set(y, name);
+    }
+    
+    public void splitEvent() {
+      
+    }
+    
+    public void removeEvent(int row) {
+      data.tracks.remove(row);
     }
 
 	public SongData getEdit(){
