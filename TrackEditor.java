@@ -39,8 +39,10 @@ public class TrackEditor extends JPanel {
       public void actionPerformed(ActionEvent e){
         if(model.getRowCount() < 16) {
         System.out.println("Splitting" + model.getValueAt(splitTrackId, 1));
-        model.addRow(new Object[]{model.getRowCount(), model.getValueAt(splitTrackId, 1), 0,11});
-        model.splitEvent();
+        model.setValueAt("0", splitTrackId, 2);
+        model.setValueAt("5", splitTrackId, 3);
+        model.addRow(new Object[]{model.getRowCount(), model.getValueAt(splitTrackId, 1), 6, 11});
+        model.splitEvent(splitTrackId, model.getRowCount()-1, 0, 5, 6, 11);
         }
         else {
           JOptionPane.showMessageDialog(null, "Too Many Tracks!!!");

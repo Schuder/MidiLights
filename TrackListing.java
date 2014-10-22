@@ -31,8 +31,8 @@ public class TrackListing extends DefaultTableModel {
       data.trackNames.set(y, name);
     }
     
-    public void splitEvent() {
-      
+    public void splitEvent(int t1, int t2, int min1, int max1, int min2, int max2) {
+      // data.pitchesFromTrack();
     }
     
     public void removeEvent(int row) {
