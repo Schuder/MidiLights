@@ -144,6 +144,8 @@ class LightHandler {
 		if(ON==null||OFF==null)return;
 		ON.kill = true;
 		OFF.kill = true;
+		ON.interrupt();
+		OFF.interrupt();
 	}
 }
 
@@ -190,15 +192,12 @@ class LightBoard {
 public class LitesEmulator extends JPanel {
 	private LightBoard board = new LightBoard();
 	private JPanelUpdater updater = new JPanelUpdater();
+	private ArrayList<JPanel> outputs;
 
 	public LitesEmulator(JPanel parent){
 		updater = new JPanelUpdater(parent, "JPanelUpdater");
-	}
-	public void run(SongData midiData){
-		// board.die(); // these is to stop the last emulation
-		// updater.kill = true;
 		this.setLayout(new GridLayout(2,8));
-		ArrayList<JPanel> outputs = new ArrayList<JPanel>();
+		outputs = new ArrayList<JPanel>();
 		for(int i=0;i<16;i++){
 			JPanel pane = new JPanel();
 			JLabel id = new JLabel(""+i);
@@ -212,6 +211,8 @@ public class LitesEmulator extends JPanel {
 			this.add(pane);
 			outputs.add(pane);
 		}
+	}
+	public void run(SongData midiData){
 		updater.start();
 		board = new LightBoard(outputs, midiData.tracks, midiData.Tempo);
 		board.start();
