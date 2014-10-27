@@ -19,7 +19,7 @@ public class TrackListing extends DefaultTableModel {
 
     @Override
     public boolean isCellEditable(int row, int col) {
-      return false;
+      return (col == 1) ? true : false ;
     }
 
     public void reorderEvent(int x, int y) {
