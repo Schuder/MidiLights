@@ -39,6 +39,7 @@ public class LitesEditor {
     
     runLites.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e){
+		emulator.die();
         SongData edit = TrackEditor.getEdit();
 		emulator.run(edit);
       }
