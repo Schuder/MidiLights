@@ -157,10 +157,11 @@ class LightBoard {
 		valid = false;
 	}
 	LightBoard(ArrayList<JPanel> lights, ArrayList<ArrayList<Note> > data, float timing){
-		gate = new CyclicBarrier(data.size()*2+1);
+		int size = java.lang.Math.min(data.size(), 16);
+		gate = new CyclicBarrier(size*2+1);
 		int i=0;
 		tempo = timing;
-		for(;i<data.size();i++){
+		for(;i<size&&i<16;i++){
 			threads.add(new LightHandler(lights.get(i), data.get(i), timing, i, gate));
 		}
 		for(;i<16;i++){
