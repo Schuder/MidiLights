@@ -82,6 +82,10 @@ class LightOff extends Thread {
 			t.start();
 		}
 	}
+	public void die(){
+		if(t==null)return;
+		t.interrupt();
+	}
 }
 class LightOn extends Thread {
 	private Thread t;
@@ -126,6 +130,10 @@ class LightOn extends Thread {
 			t.start();
 		}
 	}
+	public void die(){
+		if(t==null)return;
+		t.interrupt();
+	}
 }
 class LightHandler {
 	private LightOn ON;
@@ -144,8 +152,8 @@ class LightHandler {
 		if(ON==null||OFF==null)return;
 		ON.kill = true;
 		OFF.kill = true;
-		ON.interrupt();
-		OFF.interrupt();
+		ON.die();
+		OFF.die();
 	}
 }
 
