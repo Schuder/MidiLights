@@ -105,13 +105,24 @@ class LightOn extends Thread {
 		gate = syncher;
 		tempo = timing;
 	}
+	public Color getColorIntensity(Color c, int change){
+		if(change==0)return c;
+		Color lastColor = new Color(c.getRGB());
+		if(change<0)for(int i=0;i>change;i--){
+			lastColor = lastColor.darker();
+		}
+		else for(int i=0;i<change;i++){
+			lastColor = lastColor.brighter();
+		}
+		return lastColor;
+	}
 	public void run(){
 		try{
 			gate.await();
 			int i=0;
 			long last = 0;
 			while(!kill&&i<track.size()){
-				light.setBackground(changeColor);
+				light.setBackground(getColorIntensity(changeColor, (track.get(i).key%12)-5));
 				if(track.get(i).off-last>0)
 					Thread.sleep((int)((track.get(i).on-last)*tempo*1000));
 				last = track.get(i++).on;
@@ -172,6 +183,11 @@ class LightBoard {
 		int i=0;
 		tempo = timing;
 		for(;i<size&&i<16;i++){
+			if((i+i/8)%2==0){
+				lights.get(i).setBackground(Color.GRAY);
+			}else{
+				lights.get(i).setBackground(Color.WHITE);
+			}
 			threads.add(new LightHandler(lights.get(i), data.get(i), timing, i, gate));
 		}
 		for(;i<16;i++){
@@ -211,11 +227,6 @@ public class LitesEmulator extends JPanel {
 			JLabel id = new JLabel(""+i);
 			id.setFont(new Font("Verdana",1,60));
 			pane.add(id);
-			if((i+i/8)%2==0){
-				pane.setBackground(Color.GRAY);
-			}else{
-				pane.setBackground(Color.WHITE);
-			}
 			this.add(pane);
 			outputs.add(pane);
 		}

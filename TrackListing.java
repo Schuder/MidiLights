@@ -32,7 +32,7 @@ public class TrackListing extends DefaultTableModel {
     }
     
     public void splitEvent(String trackName, int track, short minPitch, short maxPitch, short splitMinPitch, short splitMaxPitch) {
-      System.out.println("ffffffffffffffuuuuuuck");
+      System.out.println(""+minPitch+"f"+splitMinPitch);
       int splitTrack = data.addTrack();
       data.trackNames.set(splitTrack,trackName);
       
