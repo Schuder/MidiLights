@@ -37,7 +37,7 @@ public class TrackEditor extends JPanel {
 
     splitTrack.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e){
-        // if(Integer.parseInt(model.getValueAt(splitTrackId,3).toString()) == 11 && Integer.parseInt(model.getValueAt(splitTrackId, 2).toString()) == 0) {
+        if(Integer.parseInt(model.getValueAt(splitTrackId,3).toString()) == 11 && Integer.parseInt(model.getValueAt(splitTrackId, 2).toString()) == 0) {
 			if(model.getRowCount() < 16) {
 				
 				int minPitch, maxPitch;
@@ -59,10 +59,10 @@ public class TrackEditor extends JPanel {
 			else {
 			  JOptionPane.showMessageDialog(null, "Too Many Tracks!!!");
 			}
-        // }
-        // else {
-          // JOptionPane.showMessageDialog(null, "Split Too Many Times!@!@!@!@");
-        // }
+        }
+        else {
+          JOptionPane.showMessageDialog(null, "Split Too Many Times!@!@!@!@");
+        }
       }
     });
     
