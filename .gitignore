@@ -1,4 +1,7 @@
 *.class
+Thumbs.db
+MidiFiles/*
+MidiLites/*
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/

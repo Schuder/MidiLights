@@ -55,7 +55,7 @@ public class MidiDecompiler {
 						}
 					 	Song.trackNames.set(trackIndex, name);
 					}
-					if(type==81&&!tempoFlag){
+					if(type==81/* &&!tempoFlag */){
 						Formatter formatter = new Formatter();
 						for (byte b : data) {
 							formatter.format("%02x", b);
@@ -73,7 +73,8 @@ public class MidiDecompiler {
 						float mspt = 60000 / (bpm*ppq);
 						// System.out.println("MS PER TICK: " + mspt);
 						// System.out.println("TICKS PER S: " + (1000/mspt));
-						Song.Tempo = mspt/1000;
+						System.out.println(MidiDecompiler.cropFileName(fileName)+", "+trackIndex+" Tempo: "+(float)(mspt/1000)+", "+tempoFlag);
+						if(!tempoFlag)Song.Tempo = mspt/1000;
 						tempoFlag = true;
 					}
 				}
