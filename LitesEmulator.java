@@ -151,7 +151,7 @@ class LightHandler {
 	private LightOff OFF;
 
 	LightHandler(JPanel target, ArrayList<Note> data, float timing, int index, CyclicBarrier syncher){
-		ON = new LightOn(target, Color.RED, data, timing, "Light"+index+"on", syncher);
+		ON = new LightOn(target, new Color(128, 0, 0), data, timing, "Light"+index+"on", syncher);
 		OFF = new LightOff(target, target.getBackground(), data, timing, "Light"+index+"off", syncher);
 	}
 	public void start(){
