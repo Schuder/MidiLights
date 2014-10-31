@@ -150,7 +150,6 @@ public class MidiGUI {
           System.out.println(ex);
           JOptionPane.showMessageDialog(null, "Error 404 See Google!");
         }
-
       }
     });
 
