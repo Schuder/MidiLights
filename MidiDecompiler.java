@@ -87,7 +87,7 @@ public class MidiDecompiler {
 	}
 	public static void ExportByTrack(SongData Song, String outputFile) throws IOException {
 		PrintWriter file = new PrintWriter(new File(outputFile));
-		file.println(Song.Tempo);
+		file.println("0 "+Song.Tempo);
 		int i = 0;
 		for(ArrayList<Note> track : Song.tracks){
 			if(Song.trackNames.get(i++).equals("Empty"))continue;
